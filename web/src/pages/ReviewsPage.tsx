@@ -65,10 +65,10 @@ export const ReviewsPage = () => {
     >
       {app ? (
         <>
-          <Text.H1 className="mb-8">
+          <Text.H1 className="mb-4">
             {app.nickname || app.app_name}'s reviews
           </Text.H1>
-          <Text.P>
+          <Text.P className="mb-8">
             Reviews from past 48 hours. Reviews are synced every 5 minutes.
           </Text.P>
           <ReviewsTable
