@@ -61,7 +61,7 @@ func syncAllMonitoredApps() {
 	}
 
 	// Start a simple HTTP server for health checks
-	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("OK"))
 	})

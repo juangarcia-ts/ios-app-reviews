@@ -26,7 +26,7 @@ func NewMonitoredAppsRepository(db *sqlx.DB) *MonitoredAppsRepository {
 
 func (r *MonitoredAppsRepository) FindAll() ([]MonitoredApp, error) {
 	monitoredApps := make([]MonitoredApp, 0)
-	query := "SELECT * FROM monitored_apps"
+	query := "SELECT * FROM monitored_apps ORDER BY created_at DESC" // Guaranteed to be in the correct order
 	err := r.db.Select(&monitoredApps, query)
 	return monitoredApps, err
 }
