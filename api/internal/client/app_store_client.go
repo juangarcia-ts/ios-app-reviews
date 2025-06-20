@@ -78,6 +78,19 @@ type RssFeed struct {
 	} `json:"feed"`
 }
 
+type GetAppInfoFromAppStore struct {
+	ResultCount int `json:"resultCount"`
+	Results     []struct {
+		TrackName string `json:"trackName"`
+		ArtworkUrl512 string `json:"artworkUrl512"`
+	} `json:"results"`
+}
+
+type AppInfo struct {
+	AppName string `json:"app_name"`
+	LogoUrl string `json:"logo_url"`
+}
+
 type AppStoreClient struct {}
 
 func NewAppStoreClient() *AppStoreClient {
@@ -118,4 +131,41 @@ func (c *AppStoreClient) GetReviews(appId string, page int) ([]AppStoreReview, e
 	}
 
 	return appStoreReviews, nil
+}
+
+func (c *AppStoreClient) GetAppInfoFromAppStore(appId string) (*AppInfo, error) {
+	url := fmt.Sprintf("https://itunes.apple.com/lookup?id=%s", appId)
+	resp, err := http.Get(url)
+	
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var response GetAppInfoFromAppStore
+
+	if err := json.Unmarshal(body, &response); err != nil {
+		return nil, err
+	}
+
+	if response.ResultCount == 0 || len(response.Results) == 0 {
+		return nil, fmt.Errorf("app not found")
+	}
+
+	appInfo := response.Results[0]
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &AppInfo{
+		AppName: appInfo.TrackName,
+		LogoUrl: appInfo.ArtworkUrl512,
+	}, nil
 }

@@ -2,13 +2,15 @@ package repository
 
 import (
 	"time"
-
+	"errors"
 	"github.com/jmoiron/sqlx"
 )
 
 type MonitoredApp struct {
 	AppId            			string    	 `json:"app_id" db:"app_id"`
+	AppName        				string    	 `json:"app_name" db:"app_name"`
 	Nickname        			string    	 `json:"nickname" db:"nickname"`
+	LogoUrl        				string    	 `json:"logo_url" db:"logo_url"`
 	LastSyncedAt 				*time.Time 	 `json:"last_synced_at" db:"last_synced_at"`
 	CreatedAt      				time.Time 	 `json:"created_at" db:"created_at"`
 	UpdatedAt      				time.Time 	 `json:"updated_at" db:"updated_at"`
@@ -36,16 +38,15 @@ func (r *MonitoredAppsRepository) FindById(id string) (*MonitoredApp, error) {
 	return &monitoredApp, err
 }
 
-func (r *MonitoredAppsRepository) Create(appId string, nickname string) (*MonitoredApp, error) {
-	query := `INSERT INTO monitored_apps ("app_id", "nickname") VALUES ($1, $2) RETURNING id`
-	insertedRow := r.db.QueryRow(query, appId, nickname)
+func (r *MonitoredAppsRepository) Create(appId string, appName string, logoUrl string, nickname *string) (*MonitoredApp, error) {
+	query := `INSERT INTO monitored_apps ("app_id", "app_name", "logo_url", "nickname") VALUES ($1, $2, $3, $4)`
+	_, err := r.db.Exec(query, appId, appName, logoUrl, nickname)
 
-	var insertedRowId string
-	if err := insertedRow.Scan(&insertedRowId); err != nil {
+	if err != nil {
 		return nil, err
 	}
 
-	return r.FindById(insertedRowId)
+	return r.FindById(appId)
 }
 
 func (r *MonitoredAppsRepository) UpdateLastSyncedAt(appId string, lastSyncedAt time.Time) (*MonitoredApp, error) {
@@ -59,15 +60,18 @@ func (r *MonitoredAppsRepository) UpdateLastSyncedAt(appId string, lastSyncedAt 
 	return r.FindById(appId)
 }
 
-func (r *MonitoredAppsRepository) Delete(id string) (string, error) {
+func (r *MonitoredAppsRepository) Delete(appId string) error {
 	query := "DELETE FROM monitored_apps WHERE app_id = $1"
-	result := r.db.MustExec(query, id)
+	result := r.db.MustExec(query, appId)
+	rowsAffected, err := result.RowsAffected();
 
-	if rowsAffected, err := result.RowsAffected(); err != nil {
-		return "", err
-	} else if rowsAffected == 0 {
-		return "", nil
-	} else {
-		return id, nil
+	if err != nil {
+		return err
 	}
+
+	if rowsAffected == 0 {
+		return errors.New("App not found")
+	}
+
+	return nil
 }
