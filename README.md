@@ -11,8 +11,6 @@ A full-stack application that monitors and displays iOS App Store reviews. Built
 - PostgreSQL database for persistence
 - RESTful API for all operations
 - Responsive design for desktop, tablet, and mobile
-- Search and filtering capabilities
-- Real-time data fetching with caching
 
 ## Architecture
 
@@ -36,7 +34,6 @@ React Frontend ←→ Go API Server ←→ Cron Service
 - TanStack Query for data fetching and caching
 - Tailwind CSS for styling
 - Vite for building
-- Radix UI for accessible components
 - Shadcn/ui component library
 
 ## Quick Start
