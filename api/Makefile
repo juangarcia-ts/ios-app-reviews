@@ -5,8 +5,11 @@ export
 install:
 	go mod tidy
 
-run:
+api:
 	go run cmd/api/main.go
+
+cron:
+	go run cmd/cron/main.go
 
 migration/new:
 	sql-migrate new -config=sqlmigrate.yml -env="default" $(name)

@@ -6,15 +6,18 @@ import (
 	"net/http"
 	"fmt"
 	"strconv"
+	"time"
+	
+	"ios-app-reviews-viewer.com/m/internal/helpers"
 )
 
 type AppStoreReview struct {
-	ID string `json:"id"`
+	Id string `json:"id"`
 	Title string `json:"title"`
 	Content string `json:"content"`
 	Author string `json:"author"`
 	Rating int `json:"rating"`
-	SubmittedAt string `json:"submittedAt"`
+	SubmittedAt time.Time `json:"submittedAt"`
 }
 
 type RssFeedEntry struct {
@@ -36,7 +39,7 @@ type RssFeedEntry struct {
 	IMVersion struct {
 		Label string `json:"label"`
 	} `json:"im:version"`
-	ID struct {
+	Id struct {
 		Label string `json:"label"`
 	} `json:"id"`
 	Title struct {
@@ -102,13 +105,15 @@ func (c *AppStoreClient) GetReviews(appId string, page int) ([]AppStoreReview, e
 
 	for i, review := range reviews {
 		rating, _ := strconv.Atoi(review.IMRating.Label)
+		parsedSubmittedAt, _ := helpers.ParseDateTime(review.Updated.Label)
+
 		appStoreReviews[i] = AppStoreReview{
-			ID: review.ID.Label,
+			Id: review.Id.Label,
 			Title: review.Title.Label,
 			Content: review.Content.Label,
 			Author: review.Author.Name.Label,
 			Rating: rating,
-			SubmittedAt: review.Updated.Label,
+			SubmittedAt: parsedSubmittedAt,
 		}
 	}
 

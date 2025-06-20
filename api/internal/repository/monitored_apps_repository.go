@@ -10,7 +10,7 @@ type MonitoredApp struct {
 	Id             				string    	 `json:"id" db:"id"`
 	AppId            			string    	 `json:"app_id" db:"app_id"`
 	Nickname        			string    	 `json:"nickname" db:"nickname"`
-	LastSyncedAt 				time.Time 	 `json:"last_synced_at" db:"last_synced_at"`
+	LastSyncedAt 				*time.Time 	 `json:"last_synced_at" db:"last_synced_at"`
 	CreatedAt      				time.Time 	 `json:"created_at" db:"created_at"`
 	UpdatedAt      				time.Time 	 `json:"updated_at" db:"updated_at"`
 }
@@ -49,16 +49,15 @@ func (r *MonitoredAppsRepository) Create(appId string, nickname string) (*Monito
 	return r.FindById(insertedRowId)
 }
 
-func (r *MonitoredAppsRepository) UpdateLastSyncedAt(id string, lastSyncedAt time.Time) (*MonitoredApp, error) {
-	query := "UPDATE monitored_apps SET last_synced_at = $1 WHERE id = $2 RETURNING id"
-	updatedRow := r.db.QueryRow(query, lastSyncedAt, id)
+func (r *MonitoredAppsRepository) UpdateLastSyncedAt(appId string, lastSyncedAt time.Time) (*MonitoredApp, error) {
+	query := "UPDATE monitored_apps SET last_synced_at = $1 WHERE app_id = $2"
+	_, err := r.db.Exec(query, lastSyncedAt, appId)
 
-	var updatedRowId string
-	if err := updatedRow.Scan(&updatedRowId); err != nil {
+	if err != nil {
 		return nil, err
 	}
 
-	return r.FindById(updatedRowId)
+	return r.FindById(appId)
 }
 
 func (r *MonitoredAppsRepository) Delete(id string) (string, error) {

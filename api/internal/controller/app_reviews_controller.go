@@ -48,7 +48,8 @@ func (c *AppReviewsController) GetAppReviews(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	appReviews, err := c.appReviewsService.FindAll(appId, parsedLimit, parsedPage)
+	offset := (parsedPage - 1) * parsedLimit
+	appReviews, err := c.appReviewsService.FindAll(appId, parsedLimit, offset)
 	
 	response := map[string]interface{}{
 		"data": appReviews,

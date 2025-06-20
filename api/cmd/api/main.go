@@ -15,21 +15,17 @@ import (
 )
 
 func main() {
+	// Set up dependencies
 	db := database.Connect()
-
-	// monitoredAppsRepository := repository.NewMonitoredAppsRepository(db)
+	appStoreClient := client.NewAppStoreClient()
 	appReviewsRepository := repository.NewAppReviewsRepository(db)
-
-	appReviewsService := service.NewAppReviewsService(appReviewsRepository)
-
-	client.NewAppStoreClient()
-	// appStoreClient := client.NewAppStoreClient()
-	// reviews, err := appStoreClient.GetReviews(appId, formattedPage)
-
+	monitoredAppsRepository := repository.NewMonitoredAppsRepository(db)
+	appReviewsService := service.NewAppReviewsService(appReviewsRepository, appStoreClient)
+	service.NewMonitoredAppsService(monitoredAppsRepository)
 	appReviewsController := controller.NewAppReviewsController(appReviewsService)
-	
-	http.HandleFunc("/reviews", appReviewsController.GetAppReviews)
-	
+	http.HandleFunc("/reviews", appReviewsController.GetAppReviews)	
+
+	// Start server
 	fmt.Println("Server starting on :8080")
 	http.ListenAndServe(":8080", nil)
 }
