@@ -21,7 +21,7 @@ type PageLayoutProps = {
 export const PageLayout = ({ children, breadcrumbs }: PageLayoutProps) => {
   return (
     <main className="flex h-full w-full px-4 py-8">
-      <div className="container mx-auto w-full max-w-7xl">
+      <div className="container mx-auto w-full lg:max-w-7xl">
         {breadcrumbs && (
           <Breadcrumb className="mb-4">
             <BreadcrumbList>

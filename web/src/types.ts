@@ -12,8 +12,15 @@ export interface AppReview {
 
 export interface MonitoredApp {
   app_id: string;
-  nickname: string;
+  app_name: string;
+  logo_url: string;
+  nickname: string | null;
   last_synced_at: string;
   created_at: string;
   updated_at: string;
+}
+
+export interface AppInfo {
+  app_name: string;
+  logo_url: string;
 }

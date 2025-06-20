@@ -1,6 +1,6 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { ReviewsTable } from "../components/ReviewsTable";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { PageLayout } from "../components/PageLayout";
 import { Text } from "@/lib/components/ui/text";
@@ -50,13 +50,20 @@ export const ReviewsPage = () => {
       breadcrumbs={[
         { label: "Home", href: "/" },
         ...(app
-          ? [{ label: app.nickname, href: `/apps/${appId}/reviews` }]
+          ? [
+              {
+                label: app.nickname || app.app_name,
+                href: `/apps/${appId}/reviews`,
+              },
+            ]
           : []),
       ]}
     >
       {app ? (
         <>
-          <Text.H1 className="mb-8">{app.nickname}'s reviews 📊</Text.H1>
+          <Text.H1 className="mb-8">
+            {app.nickname || app.app_name}'s reviews
+          </Text.H1>
           <ReviewsTable
             isLoading={isLoading}
             reviews={paginatedReviews?.data || []}
