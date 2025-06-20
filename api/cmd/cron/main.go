@@ -4,6 +4,7 @@ import (
 	"log"
 	"fmt"
 	"time"
+	"net/http"
 
 	"ios-app-reviews-viewer.com/m/internal/database"
 	"ios-app-reviews-viewer.com/m/internal/client"
@@ -58,5 +59,12 @@ func syncAllMonitoredApps() {
 			fmt.Printf("[App ID: %s] Last synced at successfully updated\n", monitoredApp.AppId)
 		}
 	}
-	
+
+	// Start a simple HTTP server for health checks
+	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("OK"))
+	})
+
+	http.ListenAndServe(":8000", nil)
 }
