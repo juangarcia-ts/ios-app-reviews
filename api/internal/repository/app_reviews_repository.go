@@ -26,11 +26,18 @@ func NewAppReviewsRepository(db *sqlx.DB) *AppReviewsRepository {
 	return &AppReviewsRepository{db: db}
 }
 
-func (r *AppReviewsRepository) FindAll(limit int, offset int) ([]AppReview, error) {
+func (r *AppReviewsRepository) FindAll(appId string, limit int, offset int) ([]AppReview, error) {
 	appReviews := make([]AppReview, 0)
-	query := "SELECT * FROM app_reviews LIMIT $1 OFFSET $2"
+	query := "SELECT * FROM app_reviews WHERE app_id = $1 LIMIT $2 OFFSET $3"
 	err := r.db.Select(&appReviews, query)
-	return monitoredApps, err
+	return appReviews, err
+}
+
+func (r *AppReviewsRepository) FindById(id string) (*AppReview, error) {
+	appReview := AppReview{}
+	query := "SELECT * FROM app_reviews WHERE id = $1"
+	err := r.db.Get(&appReview, query, id)
+	return &appReview, err
 }
 
 func (r *AppReviewsRepository) Create(appId string, title string, content string, author string, rating int, submittedAt time.Time) (*AppReview, error) {

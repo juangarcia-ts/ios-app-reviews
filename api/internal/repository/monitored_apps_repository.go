@@ -31,6 +31,13 @@ func (r *MonitoredAppsRepository) FindAll() ([]MonitoredApp, error) {
 	return monitoredApps, err
 }
 
+func (r *MonitoredAppsRepository) FindById(id string) (*MonitoredApp, error) {
+	monitoredApp := MonitoredApp{}
+	query := "SELECT * FROM monitored_apps WHERE id = $1"
+	err := r.db.Get(&monitoredApp, query, id)
+	return &monitoredApp, err
+}
+
 func (r *MonitoredAppsRepository) Create(appId string, nickname string, pollingIntervalInMinutes int) (*MonitoredApp, error) {
 	query := `INSERT INTO monitored_apps ("app_id", "nickname", "polling_interval_in_minutes") VALUES ($1, $2, $3) RETURNING id`
 	insertedRow := r.db.QueryRow(query, appId, nickname, pollingIntervalInMinutes)
