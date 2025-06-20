@@ -5,9 +5,11 @@ import (
 	"math"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gorilla/mux"
 	"ios-app-reviews-viewer.com/m/internal/service"
+	"ios-app-reviews-viewer.com/m/internal/helpers"
 )
 
 type AppReviewsController struct {
@@ -22,6 +24,8 @@ func (c *AppReviewsController) GetAppReviews(w http.ResponseWriter, r *http.Requ
 	appId := mux.Vars(r)["appId"]
 	page := r.URL.Query().Get("page")
 	limit := r.URL.Query().Get("limit")
+	startsAt := r.URL.Query().Get("startsAt")
+	endsAt := r.URL.Query().Get("endsAt")
 
 	if appId == "" {
 		http.Error(w, "App ID is required", http.StatusBadRequest)
@@ -34,6 +38,28 @@ func (c *AppReviewsController) GetAppReviews(w http.ResponseWriter, r *http.Requ
 
 	if limit == "" {
 		limit = "10"
+	}
+
+	if startsAt == "" {
+		startsAt = time.Now().Add(-48 * time.Hour).Format(time.RFC3339)
+	} 
+
+	if endsAt == "" {
+		endsAt = time.Now().Format(time.RFC3339)
+	}
+	
+	parsedStartsAt, err := helpers.ParseDateTime(startsAt)
+
+	if err != nil {
+		http.Error(w, "Invalid startsAt date", http.StatusBadRequest)
+		return
+	}
+	
+	parsedEndsAt, err := helpers.ParseDateTime(endsAt)
+
+	if err != nil {
+		http.Error(w, "Invalid endsAt date", http.StatusBadRequest)
+		return
 	}
 
 	parsedLimit, err := strconv.Atoi(limit)
@@ -51,7 +77,7 @@ func (c *AppReviewsController) GetAppReviews(w http.ResponseWriter, r *http.Requ
 	}
 
 	offset := (parsedPage - 1) * parsedLimit
-	appReviews, count, err := c.appReviewsService.FindAllWithCount(appId, parsedLimit, offset)
+	appReviews, count, err := c.appReviewsService.FindAllWithCount(appId, parsedLimit, offset, parsedStartsAt, parsedEndsAt)
 
 	response := map[string]interface{}{
 		"data":       appReviews,

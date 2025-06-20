@@ -26,17 +26,17 @@ func NewAppReviewsRepository(db *sqlx.DB) *AppReviewsRepository {
 	return &AppReviewsRepository{db: db}
 }
 
-func (r *AppReviewsRepository) FindAll(appId string, limit int, offset int) ([]AppReview, error) {
+func (r *AppReviewsRepository) FindAll(appId string, limit int, offset int, startsAt time.Time, endsAt time.Time) ([]AppReview, error) {
 	appReviews := make([]AppReview, 0)
-	query := "SELECT * FROM app_reviews WHERE app_id = $1 ORDER BY submitted_at DESC LIMIT $2 OFFSET $3"
-	err := r.db.Select(&appReviews, query, appId, limit, offset)
+	query := "SELECT * FROM app_reviews WHERE app_id = $1 AND submitted_at BETWEEN $2 AND $3 ORDER BY submitted_at DESC LIMIT $4 OFFSET $5"
+	err := r.db.Select(&appReviews, query, appId, startsAt, endsAt, limit, offset)
 	return appReviews, err
 }
 
-func (r *AppReviewsRepository) Count(appId string) (int, error) {
+func (r *AppReviewsRepository) Count(appId string, startsAt time.Time, endsAt time.Time) (int, error) {
 	var count int
-	query := "SELECT COUNT(*) FROM app_reviews WHERE app_id = $1"
-	err := r.db.Get(&count, query, appId)
+	query := "SELECT COUNT(*) FROM app_reviews WHERE app_id = $1 AND submitted_at BETWEEN $2 AND $3"
+	err := r.db.Get(&count, query, appId, startsAt, endsAt)
 	return count, err
 }
 
