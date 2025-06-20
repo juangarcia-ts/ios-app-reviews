@@ -1,7 +1,9 @@
 -- +migrate Up
 CREATE TABLE IF NOT EXISTS "monitored_apps" (
   app_id text NOT NULL PRIMARY KEY,
+  nickname text NOT NULL,
   polling_interval_in_minutes int NOT NULL DEFAULT 60,
+  last_synced_at timestamp,
   created_at timestamp NOT NULL DEFAULT now(),
   updated_at timestamp NOT NULL DEFAULT now()
 );

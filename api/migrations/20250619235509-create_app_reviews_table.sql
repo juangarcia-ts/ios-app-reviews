@@ -1,6 +1,6 @@
 -- +migrate Up
 CREATE TABLE IF NOT EXISTS "app_reviews" (
-  review_id text NOT NULL PRIMARY KEY,
+  id text NOT NULL PRIMARY KEY,
   app_id text NOT NULL,
   title text NOT NULL,
   content text NOT NULL,

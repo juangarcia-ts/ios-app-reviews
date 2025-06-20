@@ -11,14 +11,18 @@ import (
 
 	"ios-app-reviews-viewer.com/m/internal/database"
 	"ios-app-reviews-viewer.com/m/internal/client"
+	"ios-app-reviews-viewer.com/m/internal/repository"
 )
 
 func main() {
-	database.Connect()
+	db := database.Connect()
+
+	monitoredAppsRepository := repository.NewMonitoredAppsRepository(db)
+	appReviewsRepository := repository.NewAppReviewsRepository(db)
 
 	appStoreClient := client.NewAppStoreClient()
-
-	http.HandleFunc("/rss", func(w http.ResponseWriter, r *http.Request) {
+	
+	http.HandleFunc("/reviews", func(w http.ResponseWriter, r *http.Request) {
 		appId := r.URL.Query().Get("appId")
 		page := r.URL.Query().Get("page")
 		
