@@ -33,6 +33,13 @@ func (r *AppReviewsRepository) FindAll(appId string, limit int, offset int) ([]A
 	return appReviews, err
 }
 
+func (r *AppReviewsRepository) Count(appId string) (int, error) {
+	var count int
+	query := "SELECT COUNT(*) FROM app_reviews WHERE app_id = $1"
+	err := r.db.Get(&count, query, appId)
+	return count, err
+}
+
 func (r *AppReviewsRepository) FindById(id string) (*AppReview, error) {
 	appReview := AppReview{}
 	query := "SELECT * FROM app_reviews WHERE id = $1"

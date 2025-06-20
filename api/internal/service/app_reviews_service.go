@@ -20,8 +20,20 @@ func NewAppReviewsService(repository *repository.AppReviewsRepository, appStoreC
 	}
 }
 
-func (s *AppReviewsService) FindAll(appId string, limit int, offset int) ([]repository.AppReview, error) {
-	return s.repository.FindAll(appId, limit, offset)
+func (s *AppReviewsService) FindAllWithCount(appId string, limit int, offset int) ([]repository.AppReview, int, error) {
+	count, err := s.repository.Count(appId)
+
+	if err != nil {
+		return nil, 0, err
+	}
+	
+	reviews, err := s.repository.FindAll(appId, limit, offset)
+
+	if err != nil {
+		return nil, count, err
+	}
+
+	return reviews, count, nil
 }
 
 func (s *AppReviewsService) Create(appId string, appStoreReview client.AppStoreReview) (*repository.AppReview, error) {

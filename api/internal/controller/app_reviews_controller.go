@@ -3,6 +3,7 @@ package controller
 import (
 	"net/http"
 	"strconv"
+	"math"
 	"encoding/json"
 
 	"github.com/gorilla/mux"
@@ -50,12 +51,14 @@ func (c *AppReviewsController) GetAppReviews(w http.ResponseWriter, r *http.Requ
 	}
 
 	offset := (parsedPage - 1) * parsedLimit
-	appReviews, err := c.appReviewsService.FindAll(appId, parsedLimit, offset)
+	appReviews, count, err := c.appReviewsService.FindAllWithCount(appId, parsedLimit, offset)
 	
 	response := map[string]interface{}{
 		"data": appReviews,
 		"page": parsedPage,
 		"limit": parsedLimit,
+		"total": count,
+		"totalPages": math.Ceil(float64(count) / float64(parsedLimit)),
 	}
 	
 	w.WriteHeader(http.StatusOK)
