@@ -39,6 +39,11 @@ func main() {
 	router.HandleFunc("/api/v1/apps/{appId}/lookup", monitoredAppsController.GetAppInfoFromAppStore).Methods("GET")
 	router.HandleFunc("/api/v1/apps/{appId}/sync", monitoredAppsController.SyncReviews).Methods("POST")
 
+	// Special route for health checks
+	router.HandleFunc("/api/v1/health", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}).Methods("HEAD")
+
 	// Set up CORS
 	c := cors.New(cors.Options{
 		AllowedOrigins: []string{"*"},

@@ -60,11 +60,10 @@ func syncAllMonitoredApps() {
 		}
 	}
 
-	// Start a simple HTTP server for health checks
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	// Special route for health checks
+	router.HandleFunc("/api/v1/health", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("OK"))
-	})
-
+	}).Methods("HEAD")
+	
 	http.ListenAndServe(":8000", nil)
 }
