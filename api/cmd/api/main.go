@@ -6,6 +6,7 @@ import (
 
 	"fmt"
 	"net/http"
+	"github.com/rs/cors"
 
 	"ios-app-reviews-viewer.com/m/internal/database"
 	"ios-app-reviews-viewer.com/m/internal/client"
@@ -23,9 +24,16 @@ func main() {
 	appReviewsService := service.NewAppReviewsService(appReviewsRepository, appStoreClient)
 	service.NewMonitoredAppsService(monitoredAppsRepository)
 	appReviewsController := controller.NewAppReviewsController(appReviewsService)
-	http.HandleFunc("/reviews", appReviewsController.GetAppReviews)	
+	
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"},
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders: []string{"*"},
+	})
+
+	http.HandleFunc("/api/v1/reviews", appReviewsController.GetAppReviews)
 
 	// Start server
 	fmt.Println("Server starting on :8080")
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":8080", c.Handler(http.DefaultServeMux))
 }
