@@ -1,19 +1,19 @@
 package repository
 
 import (
-	"time"
 	"errors"
 	"github.com/jmoiron/sqlx"
+	"time"
 )
 
 type MonitoredApp struct {
-	AppId            			string    	 `json:"app_id" db:"app_id"`
-	AppName        				string    	 `json:"app_name" db:"app_name"`
-	Nickname        			string    	 `json:"nickname" db:"nickname"`
-	LogoUrl        				string    	 `json:"logo_url" db:"logo_url"`
-	LastSyncedAt 				*time.Time 	 `json:"last_synced_at" db:"last_synced_at"`
-	CreatedAt      				time.Time 	 `json:"created_at" db:"created_at"`
-	UpdatedAt      				time.Time 	 `json:"updated_at" db:"updated_at"`
+	AppId        string     `json:"app_id" db:"app_id"`
+	AppName      string     `json:"app_name" db:"app_name"`
+	Nickname     string     `json:"nickname" db:"nickname"`
+	LogoUrl      string     `json:"logo_url" db:"logo_url"`
+	LastSyncedAt *time.Time `json:"last_synced_at" db:"last_synced_at"`
+	CreatedAt    time.Time  `json:"created_at" db:"created_at"`
+	UpdatedAt    time.Time  `json:"updated_at" db:"updated_at"`
 }
 
 type MonitoredAppsRepository struct {
@@ -63,14 +63,14 @@ func (r *MonitoredAppsRepository) UpdateLastSyncedAt(appId string, lastSyncedAt 
 func (r *MonitoredAppsRepository) Delete(appId string) error {
 	query := "DELETE FROM monitored_apps WHERE app_id = $1"
 	result := r.db.MustExec(query, appId)
-	rowsAffected, err := result.RowsAffected();
+	rowsAffected, err := result.RowsAffected()
 
 	if err != nil {
 		return err
 	}
 
 	if rowsAffected == 0 {
-		return errors.New("App not found")
+		return errors.New("app not found")
 	}
 
 	return nil

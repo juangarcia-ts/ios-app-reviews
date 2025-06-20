@@ -2,21 +2,21 @@ package client
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
-	"fmt"
 	"strconv"
 	"time"
-	
+
 	"ios-app-reviews-viewer.com/m/internal/helpers"
 )
 
 type AppStoreReview struct {
-	Id string `json:"id"`
-	Title string `json:"title"`
-	Content string `json:"content"`
-	Author string `json:"author"`
-	Rating int `json:"rating"`
+	Id          string    `json:"id"`
+	Title       string    `json:"title"`
+	Content     string    `json:"content"`
+	Author      string    `json:"author"`
+	Rating      int       `json:"rating"`
 	SubmittedAt time.Time `json:"submittedAt"`
 }
 
@@ -73,15 +73,15 @@ type RssFeedEntry struct {
 
 type RssFeed struct {
 	Feed struct {
-		Author struct{}    `json:"author"`
-		Entry  []RssFeedEntry   `json:"entry"`
+		Author struct{}       `json:"author"`
+		Entry  []RssFeedEntry `json:"entry"`
 	} `json:"feed"`
 }
 
 type GetAppInfoFromAppStore struct {
 	ResultCount int `json:"resultCount"`
 	Results     []struct {
-		TrackName string `json:"trackName"`
+		TrackName     string `json:"trackName"`
 		ArtworkUrl512 string `json:"artworkUrl512"`
 	} `json:"results"`
 }
@@ -91,7 +91,7 @@ type AppInfo struct {
 	LogoUrl string `json:"logo_url"`
 }
 
-type AppStoreClient struct {}
+type AppStoreClient struct{}
 
 func NewAppStoreClient() *AppStoreClient {
 	return &AppStoreClient{}
@@ -105,13 +105,13 @@ func (c *AppStoreClient) GetReviews(appId string, page int) ([]AppStoreReview, e
 		fmt.Println("err", err)
 		return nil, err
 	}
-	
+
 	defer resp.Body.Close()
 
 	body, _ := io.ReadAll(resp.Body)
 
 	var rssFeed RssFeed
-	json.Unmarshal(body, &rssFeed)	
+	json.Unmarshal(body, &rssFeed)
 
 	reviews := rssFeed.Feed.Entry
 	appStoreReviews := make([]AppStoreReview, len(reviews))
@@ -121,11 +121,11 @@ func (c *AppStoreClient) GetReviews(appId string, page int) ([]AppStoreReview, e
 		parsedSubmittedAt, _ := helpers.ParseDateTime(review.Updated.Label)
 
 		appStoreReviews[i] = AppStoreReview{
-			Id: review.Id.Label,
-			Title: review.Title.Label,
-			Content: review.Content.Label,
-			Author: review.Author.Name.Label,
-			Rating: rating,
+			Id:          review.Id.Label,
+			Title:       review.Title.Label,
+			Content:     review.Content.Label,
+			Author:      review.Author.Name.Label,
+			Rating:      rating,
 			SubmittedAt: parsedSubmittedAt,
 		}
 	}
@@ -136,7 +136,7 @@ func (c *AppStoreClient) GetReviews(appId string, page int) ([]AppStoreReview, e
 func (c *AppStoreClient) GetAppInfoFromAppStore(appId string) (*AppInfo, error) {
 	url := fmt.Sprintf("https://itunes.apple.com/lookup?id=%s", appId)
 	resp, err := http.Get(url)
-	
+
 	if err != nil {
 		return nil, err
 	}

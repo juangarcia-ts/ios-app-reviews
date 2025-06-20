@@ -2,18 +2,18 @@ package main
 
 import (
 	// Needs to be the first import since it loads the env vars
-	_ "github.com/joho/godotenv/autoload" 
+	_ "github.com/joho/godotenv/autoload"
 
 	"fmt"
-	"net/http"
-	"github.com/rs/cors"
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
+	"net/http"
 
-	"ios-app-reviews-viewer.com/m/internal/database"
 	"ios-app-reviews-viewer.com/m/internal/client"
-	"ios-app-reviews-viewer.com/m/internal/service"
-	"ios-app-reviews-viewer.com/m/internal/repository"
 	"ios-app-reviews-viewer.com/m/internal/controller"
+	"ios-app-reviews-viewer.com/m/internal/database"
+	"ios-app-reviews-viewer.com/m/internal/repository"
+	"ios-app-reviews-viewer.com/m/internal/service"
 )
 
 func main() {
@@ -26,7 +26,7 @@ func main() {
 	monitoredAppsService := service.NewMonitoredAppsService(monitoredAppsRepository)
 	appReviewsController := controller.NewAppReviewsController(appReviewsService)
 	monitoredAppsController := controller.NewMonitoredAppsController(appReviewsService, monitoredAppsService, appStoreClient)
-	
+
 	// Create Mux router
 	router := mux.NewRouter()
 

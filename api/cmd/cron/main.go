@@ -1,15 +1,15 @@
 package main
 
 import (
-	"log"
 	"fmt"
-	"time"
+	"log"
 	"net/http"
+	"time"
 
-	"ios-app-reviews-viewer.com/m/internal/database"
 	"ios-app-reviews-viewer.com/m/internal/client"
-	"ios-app-reviews-viewer.com/m/internal/service"
+	"ios-app-reviews-viewer.com/m/internal/database"
 	"ios-app-reviews-viewer.com/m/internal/repository"
+	"ios-app-reviews-viewer.com/m/internal/service"
 
 	"github.com/go-co-op/gocron/v2"
 )
@@ -53,7 +53,7 @@ func syncAllMonitoredApps() {
 
 	for _, monitoredApp := range monitoredApps {
 		err := appReviewsService.SyncAppReviews(monitoredApp.AppId, monitoredApp.LastSyncedAt)
-		
+
 		if err == nil {
 			monitoredAppsService.UpdateLastSyncedAt(monitoredApp.AppId, time.Now())
 			fmt.Printf("[App ID: %s] Last synced at successfully updated\n", monitoredApp.AppId)

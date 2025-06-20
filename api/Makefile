@@ -5,6 +5,9 @@ export
 install:
 	go mod tidy
 
+format:
+	go fmt ./...
+
 api:
 	go run cmd/api/main.go
 

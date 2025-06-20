@@ -9,13 +9,13 @@ import (
 )
 
 type AppReviewsService struct {
-	repository *repository.AppReviewsRepository
+	repository     *repository.AppReviewsRepository
 	appStoreClient *client.AppStoreClient
 }
 
 func NewAppReviewsService(repository *repository.AppReviewsRepository, appStoreClient *client.AppStoreClient) *AppReviewsService {
 	return &AppReviewsService{
-		repository: repository,
+		repository:     repository,
 		appStoreClient: appStoreClient,
 	}
 }
@@ -26,7 +26,7 @@ func (s *AppReviewsService) FindAllWithCount(appId string, limit int, offset int
 	if err != nil {
 		return nil, 0, err
 	}
-	
+
 	reviews, err := s.repository.FindAll(appId, limit, offset)
 
 	if err != nil {
@@ -38,12 +38,12 @@ func (s *AppReviewsService) FindAllWithCount(appId string, limit int, offset int
 
 func (s *AppReviewsService) Create(appId string, appStoreReview client.AppStoreReview) (*repository.AppReview, error) {
 	return s.repository.Create(
-		appId, 
-		appStoreReview.Id, 
-		appStoreReview.Title, 
-		appStoreReview.Content, 
-		appStoreReview.Author, 
-		appStoreReview.Rating, 
+		appId,
+		appStoreReview.Id,
+		appStoreReview.Title,
+		appStoreReview.Content,
+		appStoreReview.Author,
+		appStoreReview.Rating,
 		appStoreReview.SubmittedAt,
 	)
 }
@@ -71,7 +71,7 @@ func (s *AppReviewsService) SyncAppReviews(appId string, moreRecentThan *time.Ti
 
 		for _, review := range recentReviews {
 			newReview, err := s.Create(appId, review)
-			
+
 			if err != nil {
 				fmt.Printf("Error saving review %s: %v\n", review.Id, err)
 				return err

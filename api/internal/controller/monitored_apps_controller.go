@@ -1,20 +1,20 @@
 package controller
 
 import (
-	"net/http"
 	"encoding/json"
-	"time"
 	"fmt"
+	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
-	"ios-app-reviews-viewer.com/m/internal/service"
 	"ios-app-reviews-viewer.com/m/internal/client"
+	"ios-app-reviews-viewer.com/m/internal/service"
 )
 
 type MonitoredAppsController struct {
-	appReviewsService *service.AppReviewsService
+	appReviewsService    *service.AppReviewsService
 	monitoredAppsService *service.MonitoredAppsService
-	appStoreClient *client.AppStoreClient
+	appStoreClient       *client.AppStoreClient
 }
 
 func NewMonitoredAppsController(appReviewsService *service.AppReviewsService, monitoredAppsService *service.MonitoredAppsService, appStoreClient *client.AppStoreClient) *MonitoredAppsController {
@@ -48,9 +48,9 @@ func (c *MonitoredAppsController) GetMonitoredApp(w http.ResponseWriter, r *http
 
 func (c *MonitoredAppsController) CreateMonitoredApp(w http.ResponseWriter, r *http.Request) {
 	var req struct {
-		AppId    string `json:"app_id"`
-		AppName  string `json:"app_name"`
-		LogoUrl  string `json:"logo_url"`
+		AppId    string  `json:"app_id"`
+		AppName  string  `json:"app_name"`
+		LogoUrl  string  `json:"logo_url"`
 		Nickname *string `json:"nickname"`
 	}
 
@@ -125,7 +125,7 @@ func (c *MonitoredAppsController) SyncReviews(w http.ResponseWriter, r *http.Req
 	}
 
 	err = c.appReviewsService.SyncAppReviews(monitoredApp.AppId, monitoredApp.LastSyncedAt)
-		
+
 	if err == nil {
 		c.monitoredAppsService.UpdateLastSyncedAt(monitoredApp.AppId, time.Now())
 		fmt.Printf("[App ID: %s] Last synced at successfully updated\n", monitoredApp.AppId)

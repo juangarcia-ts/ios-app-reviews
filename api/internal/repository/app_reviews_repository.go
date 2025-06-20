@@ -7,15 +7,15 @@ import (
 )
 
 type AppReview struct {
-	Id           string    `json:"id" db:"id"`
-	AppId        string    `json:"app_id" db:"app_id"`
-	Title        string    `json:"title" db:"title"`
-	Content      string    `json:"content" db:"content"`
-	Author       string    `json:"author" db:"author"`
-	Rating       int       `json:"rating" db:"rating"`
-	SubmittedAt  time.Time `json:"submitted_at" db:"submitted_at"`
-	CreatedAt    time.Time `json:"created_at" db:"created_at"`
-	UpdatedAt    time.Time `json:"updated_at" db:"updated_at"`
+	Id          string    `json:"id" db:"id"`
+	AppId       string    `json:"app_id" db:"app_id"`
+	Title       string    `json:"title" db:"title"`
+	Content     string    `json:"content" db:"content"`
+	Author      string    `json:"author" db:"author"`
+	Rating      int       `json:"rating" db:"rating"`
+	SubmittedAt time.Time `json:"submitted_at" db:"submitted_at"`
+	CreatedAt   time.Time `json:"created_at" db:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at" db:"updated_at"`
 }
 
 type AppReviewsRepository struct {
@@ -48,17 +48,17 @@ func (r *AppReviewsRepository) FindById(id string) (*AppReview, error) {
 }
 
 func (r *AppReviewsRepository) Create(
-	appId string, 
-	id string, 
-	title string, 
-	content string, 
-	author string, 
-	rating int, 
+	appId string,
+	id string,
+	title string,
+	content string,
+	author string,
+	rating int,
 	submittedAt time.Time,
 ) (*AppReview, error) {
 	query := `INSERT INTO app_reviews ("app_id", "id", "title", "content", "author", "rating", "submitted_at") VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT (id) DO NOTHING`
 	_, err := r.db.Exec(query, appId, id, title, content, author, rating, submittedAt)
-	
+
 	if err != nil {
 		return nil, err
 	}
