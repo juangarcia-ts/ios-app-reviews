@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"encoding/json"
 
+	"github.com/gorilla/mux"
 	"ios-app-reviews-viewer.com/m/internal/service"
 )
 
@@ -17,7 +18,7 @@ func NewAppReviewsController(appReviewsService *service.AppReviewsService) *AppR
 }
 
 func (c *AppReviewsController) GetAppReviews(w http.ResponseWriter, r *http.Request) {
-	appId := r.URL.Query().Get("appId")
+	appId := mux.Vars(r)["appId"]
 	page := r.URL.Query().Get("page")
 	limit := r.URL.Query().Get("limit")
 

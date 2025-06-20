@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"github.com/rs/cors"
+	"github.com/gorilla/mux"
 
 	"ios-app-reviews-viewer.com/m/internal/database"
 	"ios-app-reviews-viewer.com/m/internal/client"
@@ -22,18 +23,29 @@ func main() {
 	appReviewsRepository := repository.NewAppReviewsRepository(db)
 	monitoredAppsRepository := repository.NewMonitoredAppsRepository(db)
 	appReviewsService := service.NewAppReviewsService(appReviewsRepository, appStoreClient)
-	service.NewMonitoredAppsService(monitoredAppsRepository)
+	monitoredAppsService := service.NewMonitoredAppsService(monitoredAppsRepository)
 	appReviewsController := controller.NewAppReviewsController(appReviewsService)
+	monitoredAppsController := controller.NewMonitoredAppsController(monitoredAppsService)
 	
+	// Create Mux router
+	router := mux.NewRouter()
+
+	// Define routes
+	router.HandleFunc("/api/v1/apps", monitoredAppsController.GetMonitoredApps).Methods("GET")
+	router.HandleFunc("/api/v1/apps/{appId}", monitoredAppsController.GetMonitoredApp).Methods("GET")
+	router.HandleFunc("/api/v1/apps/{appId}/reviews", appReviewsController.GetAppReviews).Methods("GET")
+
+	// Set up CORS
 	c := cors.New(cors.Options{
 		AllowedOrigins: []string{"*"},
 		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders: []string{"*"},
 	})
 
-	http.HandleFunc("/api/v1/reviews", appReviewsController.GetAppReviews)
+	// Apply CORS middleware to router
+	handler := c.Handler(router)
 
 	// Start server
 	fmt.Println("Server starting on :8080")
-	http.ListenAndServe(":8080", c.Handler(http.DefaultServeMux))
+	http.ListenAndServe(":8080", handler)
 }

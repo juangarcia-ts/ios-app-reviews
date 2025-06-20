@@ -7,7 +7,6 @@ import (
 )
 
 type MonitoredApp struct {
-	Id             				string    	 `json:"id" db:"id"`
 	AppId            			string    	 `json:"app_id" db:"app_id"`
 	Nickname        			string    	 `json:"nickname" db:"nickname"`
 	LastSyncedAt 				*time.Time 	 `json:"last_synced_at" db:"last_synced_at"`
@@ -32,7 +31,7 @@ func (r *MonitoredAppsRepository) FindAll() ([]MonitoredApp, error) {
 
 func (r *MonitoredAppsRepository) FindById(id string) (*MonitoredApp, error) {
 	monitoredApp := MonitoredApp{}
-	query := "SELECT * FROM monitored_apps WHERE id = $1"
+	query := "SELECT * FROM monitored_apps WHERE app_id = $1"
 	err := r.db.Get(&monitoredApp, query, id)
 	return &monitoredApp, err
 }
@@ -61,7 +60,7 @@ func (r *MonitoredAppsRepository) UpdateLastSyncedAt(appId string, lastSyncedAt 
 }
 
 func (r *MonitoredAppsRepository) Delete(id string) (string, error) {
-	query := "DELETE FROM monitored_apps WHERE id = $1"
+	query := "DELETE FROM monitored_apps WHERE app_id = $1"
 	result := r.db.MustExec(query, id)
 
 	if rowsAffected, err := result.RowsAffected(); err != nil {
