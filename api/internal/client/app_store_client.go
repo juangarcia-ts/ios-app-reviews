@@ -9,6 +9,7 @@ import (
 )
 
 type AppStoreReview struct {
+	ID string `json:"id"`
 	Title string `json:"title"`
 	Content string `json:"content"`
 	Author string `json:"author"`
@@ -102,6 +103,7 @@ func (c *AppStoreClient) GetReviews(appId string, page int) ([]AppStoreReview, e
 	for i, review := range reviews {
 		rating, _ := strconv.Atoi(review.IMRating.Label)
 		appStoreReviews[i] = AppStoreReview{
+			ID: review.ID.Label,
 			Title: review.Title.Label,
 			Content: review.Content.Label,
 			Author: review.Author.Name.Label,
