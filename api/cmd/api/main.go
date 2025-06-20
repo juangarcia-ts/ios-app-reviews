@@ -25,7 +25,7 @@ func main() {
 	appReviewsService := service.NewAppReviewsService(appReviewsRepository, appStoreClient)
 	monitoredAppsService := service.NewMonitoredAppsService(monitoredAppsRepository)
 	appReviewsController := controller.NewAppReviewsController(appReviewsService)
-	monitoredAppsController := controller.NewMonitoredAppsController(monitoredAppsService, appStoreClient)
+	monitoredAppsController := controller.NewMonitoredAppsController(appReviewsService, monitoredAppsService, appStoreClient)
 	
 	// Create Mux router
 	router := mux.NewRouter()
@@ -37,6 +37,7 @@ func main() {
 	router.HandleFunc("/api/v1/apps/{appId}", monitoredAppsController.DeleteMonitoredApp).Methods("DELETE")
 	router.HandleFunc("/api/v1/apps/{appId}/reviews", appReviewsController.GetAppReviews).Methods("GET")
 	router.HandleFunc("/api/v1/apps/{appId}/lookup", monitoredAppsController.GetAppInfoFromAppStore).Methods("GET")
+	router.HandleFunc("/api/v1/apps/{appId}/sync", monitoredAppsController.SyncReviews).Methods("POST")
 
 	// Set up CORS
 	c := cors.New(cors.Options{

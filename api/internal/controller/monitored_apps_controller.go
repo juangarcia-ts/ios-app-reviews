@@ -3,6 +3,8 @@ package controller
 import (
 	"net/http"
 	"encoding/json"
+	"time"
+	"fmt"
 
 	"github.com/gorilla/mux"
 	"ios-app-reviews-viewer.com/m/internal/service"
@@ -10,12 +12,13 @@ import (
 )
 
 type MonitoredAppsController struct {
+	appReviewsService *service.AppReviewsService
 	monitoredAppsService *service.MonitoredAppsService
 	appStoreClient *client.AppStoreClient
 }
 
-func NewMonitoredAppsController(monitoredAppsService *service.MonitoredAppsService, appStoreClient *client.AppStoreClient) *MonitoredAppsController {
-	return &MonitoredAppsController{monitoredAppsService: monitoredAppsService, appStoreClient: appStoreClient}
+func NewMonitoredAppsController(appReviewsService *service.AppReviewsService, monitoredAppsService *service.MonitoredAppsService, appStoreClient *client.AppStoreClient) *MonitoredAppsController {
+	return &MonitoredAppsController{appReviewsService: appReviewsService, monitoredAppsService: monitoredAppsService, appStoreClient: appStoreClient}
 }
 
 func (c *MonitoredAppsController) GetMonitoredApps(w http.ResponseWriter, r *http.Request) {
@@ -109,4 +112,29 @@ func (c *MonitoredAppsController) GetAppInfoFromAppStore(w http.ResponseWriter, 
 
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(appInfo)
+}
+
+func (c *MonitoredAppsController) SyncReviews(w http.ResponseWriter, r *http.Request) {
+	appId := mux.Vars(r)["appId"]
+
+	monitoredApp, err := c.monitoredAppsService.FindById(appId)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	err = c.appReviewsService.SyncAppReviews(monitoredApp.AppId, monitoredApp.LastSyncedAt)
+		
+	if err == nil {
+		c.monitoredAppsService.UpdateLastSyncedAt(monitoredApp.AppId, time.Now())
+		fmt.Printf("[App ID: %s] Last synced at successfully updated\n", monitoredApp.AppId)
+	}
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
