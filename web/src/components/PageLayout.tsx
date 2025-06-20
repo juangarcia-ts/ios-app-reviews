@@ -4,7 +4,6 @@ import {
   BreadcrumbSeparator,
   BreadcrumbItem,
   BreadcrumbList,
-  BreadcrumbPage,
 } from "@/lib/components/ui/breadcrumb";
 import { Fragment } from "react/jsx-runtime";
 
