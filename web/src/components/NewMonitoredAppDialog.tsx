@@ -76,12 +76,12 @@ export const NewMonitoredAppDialog = ({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Monitor new app</Button>
+        <Button variant="outline">Monitor New App</Button>
       </DialogTrigger>
       <DialogOverlay />
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Monitor new app</DialogTitle>
+          <DialogTitle>Monitor New App</DialogTitle>
           <DialogDescription>
             Enter the App Store ID of the app you want to monitor.
           </DialogDescription>

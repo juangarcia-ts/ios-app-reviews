@@ -47,7 +47,11 @@ export const HomePage = () => {
 
       <div className="mt-8">
         {isLoading ? (
-          <div>Loading...</div>
+          <Text.P>Loading...</Text.P>
+        ) : apps.length === 0 ? (
+          <Text.Span>
+            No apps found. Click on "Monitor New App" to get started.
+          </Text.Span>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {apps?.map((app: MonitoredApp) => (

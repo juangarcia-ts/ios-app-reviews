@@ -28,6 +28,7 @@ import {
   PaginationPrevious,
   PaginationContent,
 } from "@/lib/components/ui/pagination";
+import { Text } from "@/lib/components/ui/text";
 
 type ReviewsTableProps = {
   isLoading: boolean;
@@ -106,7 +107,7 @@ export function ReviewsTable({
   ];
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Text.P>Loading...</Text.P>;
   }
 
   const table = useReactTable({
