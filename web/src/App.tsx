@@ -1,9 +1,8 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import { HomePage } from "./pages/HomePage";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { ReviewsPage } from "./pages/ReviewsPage";
-
-const queryClient = new QueryClient();
+import { queryClient } from "./query-client";
 
 function App() {
   return (
