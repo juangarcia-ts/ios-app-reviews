@@ -5,12 +5,13 @@ import (
 	"log"
 	"net/http"
 	"time"
-
+	
 	"ios-app-reviews-viewer.com/m/internal/client"
 	"ios-app-reviews-viewer.com/m/internal/database"
 	"ios-app-reviews-viewer.com/m/internal/repository"
 	"ios-app-reviews-viewer.com/m/internal/service"
-
+	
+	"github.com/gorilla/mux"
 	"github.com/go-co-op/gocron/v2"
 )
 
@@ -31,7 +32,13 @@ func main() {
 	fmt.Printf("Starting cron job %s", job.ID())
 	scheduler.Start()
 
-	select {}
+	// Special route for health checks
+	router := mux.NewRouter()
+	router.HandleFunc("/api/v1/health", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}).Methods("HEAD")
+
+	http.ListenAndServe(":8000", nil)
 }
 
 func syncAllMonitoredApps() {
@@ -59,11 +66,4 @@ func syncAllMonitoredApps() {
 			fmt.Printf("[App ID: %s] Last synced at successfully updated\n", monitoredApp.AppId)
 		}
 	}
-
-	// Special route for health checks
-	router.HandleFunc("/api/v1/health", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-	}).Methods("HEAD")
-	
-	http.ListenAndServe(":8000", nil)
 }
