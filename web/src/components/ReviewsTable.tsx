@@ -7,6 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/lib/components/ui/table";
+import { AppReview } from "../types";
 
 type ReviewsTableProps = {
   isLoading: boolean;
