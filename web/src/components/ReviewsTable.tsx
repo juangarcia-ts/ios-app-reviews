@@ -121,6 +121,7 @@ export function ReviewsTable({
     const maxVisiblePages = 5;
     const pages = [];
 
+    // Calculate start page, ensuring we don't go below 1
     let start = Math.max(
       1,
       Math.min(
@@ -128,13 +129,16 @@ export function ReviewsTable({
         totalPageCount - maxVisiblePages + 1
       )
     );
+
+    // Calculate end page, ensuring we don't exceed total pages
     let end = Math.min(totalPageCount, start + maxVisiblePages - 1);
 
+    // Generate page numbers from start to end
     for (let i = start; i <= end; i++) {
       pages.push(i);
     }
 
-    // If there are less than maxVisiblePages, pad at the start
+    // If we have fewer than maxVisiblePages, pad at the start
     while (pages.length < maxVisiblePages && pages[0] > 1) {
       pages.unshift(pages[0] - 1);
     }
