@@ -11,7 +11,7 @@ import { MonitoredApp } from "../types";
 import { format } from "date-fns";
 import { Button } from "@/lib/components/ui/button";
 import { useNavigate } from "react-router";
-import { RefreshCcwIcon, Trash2Icon } from "lucide-react";
+import { Loader2, RefreshCcwIcon, Trash2Icon } from "lucide-react";
 import { useCallback } from "react";
 import { syncReviews } from "../api/monitoredApps";
 import { queryClient } from "../query-client";
@@ -25,7 +25,7 @@ type MonitoredAppCardProps = {
 export const MonitoredAppCard = ({ app, onDelete }: MonitoredAppCardProps) => {
   const navigate = useNavigate();
 
-  const { mutate: syncReviewsMutation } = useMutation({
+  const { mutate: syncReviewsMutation, isPending: isSyncing } = useMutation({
     mutationFn: syncReviews,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["apps"] });
@@ -72,10 +72,16 @@ export const MonitoredAppCard = ({ app, onDelete }: MonitoredAppCardProps) => {
             View reviews
           </Button>
           <Button
+            disabled={isSyncing}
             variant="outline"
             onClick={() => syncReviewsMutation(app.app_id)}
           >
-            <RefreshCcwIcon className="w-4 h-4" /> Sync now
+            {isSyncing ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <RefreshCcwIcon className="w-4 h-4" />
+            )}
+            Sync now
           </Button>
         </CardAction>
       </CardFooter>

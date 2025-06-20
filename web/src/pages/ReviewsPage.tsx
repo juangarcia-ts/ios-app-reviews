@@ -12,7 +12,7 @@ export const ReviewsPage = () => {
   const { appId } = useParams();
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { data: app } = useQuery({
+  const { data: app, isLoading: isAppLoading } = useQuery({
     queryKey: ["app"],
     enabled: !!appId,
     queryFn: () => getMonitoredApp(appId!),
@@ -21,7 +21,7 @@ export const ReviewsPage = () => {
   const {
     data: paginatedReviews,
     isPlaceholderData,
-    isLoading,
+    isLoading: isReviewsLoading,
   } = useQuery({
     queryKey: ["reviews", currentPage],
     enabled: !!app?.app_id,
@@ -45,6 +45,10 @@ export const ReviewsPage = () => {
     setCurrentPage(page);
   };
 
+  if (isAppLoading || isReviewsLoading) {
+    return null;
+  }
+
   return (
     <PageLayout
       breadcrumbs={[
@@ -64,8 +68,11 @@ export const ReviewsPage = () => {
           <Text.H1 className="mb-8">
             {app.nickname || app.app_name}'s reviews
           </Text.H1>
+          <Text.P>
+            Reviews from past 48 hours. Reviews are synced every 5 minutes.
+          </Text.P>
           <ReviewsTable
-            isLoading={isLoading}
+            isLoading={isReviewsLoading}
             reviews={paginatedReviews?.data || []}
             currentPage={paginatedReviews?.page || 1}
             totalPageCount={paginatedReviews?.totalPages || 1}
