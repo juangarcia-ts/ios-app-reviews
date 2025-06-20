@@ -10,7 +10,6 @@ type MonitoredApp struct {
 	Id             				string    	 `json:"id" db:"id"`
 	AppId            			string    	 `json:"app_id" db:"app_id"`
 	Nickname        			string    	 `json:"nickname" db:"nickname"`
-	PollingIntervalInMinutes 	int    	  	 `json:"polling_interval_in_minutes" db:"polling_interval_in_minutes"`
 	LastSyncedAt 				time.Time 	 `json:"last_synced_at" db:"last_synced_at"`
 	CreatedAt      				time.Time 	 `json:"created_at" db:"created_at"`
 	UpdatedAt      				time.Time 	 `json:"updated_at" db:"updated_at"`
@@ -38,9 +37,9 @@ func (r *MonitoredAppsRepository) FindById(id string) (*MonitoredApp, error) {
 	return &monitoredApp, err
 }
 
-func (r *MonitoredAppsRepository) Create(appId string, nickname string, pollingIntervalInMinutes int) (*MonitoredApp, error) {
-	query := `INSERT INTO monitored_apps ("app_id", "nickname", "polling_interval_in_minutes") VALUES ($1, $2, $3) RETURNING id`
-	insertedRow := r.db.QueryRow(query, appId, nickname, pollingIntervalInMinutes)
+func (r *MonitoredAppsRepository) Create(appId string, nickname string) (*MonitoredApp, error) {
+	query := `INSERT INTO monitored_apps ("app_id", "nickname") VALUES ($1, $2) RETURNING id`
+	insertedRow := r.db.QueryRow(query, appId, nickname)
 
 	var insertedRowId string
 	if err := insertedRow.Scan(&insertedRowId); err != nil {
